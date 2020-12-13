@@ -1,0 +1,113 @@
+USER_INFO_FILE = "UserInformtion.txt"
+
+userNames = list()
+passWords = list()
+balances = list()
+
+#define app functions now, from main function key terms
+def showBalance(index: int) -> float: 
+    return balances[index]
+    #will display user's balance, -> defines float! value
+def deposit(index: int, amount:float):
+    balances[index] += amount
+    #puts the money entered in user account, amount treated as a float value
+def withdraw(index: int, amount: float):
+    balances[index] -= amount
+    #removes money from the account
+def login(username: str, password: str) -> int:
+    for index in range(len(userNames)):
+        if userNames[index] == username and passWords[index] == password:
+            return index
+            #makes sure the user can login or not! checks username and password against master list
+
+
+
+
+print(' Welcome to your personalized Banking Application ')
+print(' Lets get started, shall we?')
+
+def main():
+    
+    #getting data from file
+    
+    with open(USER_INFO_FILE, 'r') as user_info_file:
+        lines = user_info_file.read().splitlines()
+        for line in lines:
+            username, password, balance = line.split() #uses white space as separator and assigns respective username, password, and balance
+            balance = float(balance)    #balance must be a float
+            
+            userNames.append(username)  #updates list of usernames with username
+            passWords.append(password)  #updates password in text file
+            balances.append(balance)    #updates balance in text file
+            #referenced before assignment for now!!
+    #user log in sequence
+    username = input('Please enter your username:  ')
+    password = input('Please enter your password now:  ')
+    index = login(username, password)
+    #displaying options to user after login
+    if index is not None:
+        while True:
+            inp = input('Type D to Deposit Money\n', 'Type W to withdraw money\n', 'Type B to display Balance\n', 'Type C to change user, display user name\n', 'Type A to add a new client\n', 'Type E to exit\n')
+            
+            try:
+                if inp == 'D':
+                    amount = float(input('Enter the amount to deposit:  '))
+                    deposit(index,amount)
+                    print('Balance: {0}'.format(showBalance(index))) #showbalance in def function later, don't forget
+                
+                elif inp == 'W':
+                    amount = float(input('Enter the amount to withdraw:  '))
+                    if showBalance(index) >= amount: #check balance greater or equal to withdrawal amount!
+                        withdraw(index,amount)
+                    else:
+                        print('Not enough money!')
+                    print('Balance: {0}'.format(showBalance(index))) 
+                    
+                elif inp == 'B':
+                    print('Balance: {0}'.format(showBalance(index)))
+                
+                elif inp == 'C':
+                    new_username = input('Enter the new username:  ')
+                    new_password = input('Enter the password:  ')
+                    new_index = login(new_username, new_password)
+                    #commit new user to the index!
+                    if new_index is not None:
+                        index = new_index
+                        print('User changed to {0}.'.format(new_username))
+                    else:
+                        print('Invalid credentials, user addition not successful!!')
+                elif inp == 'A':
+                    new_username = input('Enter the username:  ')
+                    new_password = input('Enter the password:  ')
+                    new_balance = float(input('Enter the balance:  '))
+                    userName.append(new_username)
+                    passWord.append(new_password)
+                    balances.append(new_balance)
+                    print('New user has been added: {0}'.format(new_username))
+                    #new user is added to the list/file
+                
+                elif inp == 'E': #to exit program!
+                    break
+                
+                else: 
+                    print('You have made an invalid options, please try again!')
+                    
+            except Exception as e:
+                print('ERROR!!...', e)
+        else: 
+            print('Invalid Credentials!')
+            
+        #finally lets write data to the .txt master list
+        with open(USER_INFORMATION_FILE, 'w') as f:
+            for i in range(len(userNames)):
+                the_info = '{0} {1} {2}'.format(userNames[i], passWords[i], balances[i])
+                f.write(the_info)
+             #data is written, we have to def functions
+            
+
+userName = list()
+passWord = list()
+balances = list()
+
+if __name__ == '__main__':
+    main()
